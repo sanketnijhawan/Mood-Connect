@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Connect</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a8a5e6;
+            --accent: #ff7675;
+            --background: #f8f9fa;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background) 0%, #e9ecef 100%);
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text);
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+        }
+
+        /* Main App Styles */
+        .container {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            margin-bottom: 40px;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .user-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .connection-status {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .online { background: #00b894; }
+        .offline { background: #d63031; }
+
+        .mood-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        select, input {
+            padding: 12px;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            font-size: 16px;
+            flex: 1;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #5b4bc4;
+        }
+
+        .mood-entry {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            border-left: 4px solid var(--primary);
+        }
+
+        .partner-mood {
+            border-color: var(--accent);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .emoji {
+            font-size: 2em;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .user-badge {
+            background: var(--accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+        }
+
+        .room-code {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Mood Connect 🌟</h1>
+            <input type="text" id="userName" class="login-input" placeholder="Your Name">
+            <input type="text" id="roomCode" class="login-input" placeholder="Room Code">
+            <button class="login-btn" onclick="joinRoom()">Enter Room</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="header">
+        <div class="room-code">Room: <span id="currentRoomCode"></span></div>
+        <h1>Mood Connect 💞</h1>
+    </div>
+    <div class="container">
+        <div class="user-section">
+            <div class="connection-status" id="connectionStatus">
+                <div class="status-dot offline"></div>
+                <span>Connecting to room...</span>
+            </div>
+            
+            <div class="mood-form">
+                <select id="moodSelector">
+                    <option value="😊">Happy</option>
+                    <option value="😢">Sad</option>
+                    <option value="😡">Angry</option>
+                    <option value="🎉">Excited</option>
+                    <option value="😴">Tired</option>
+                </select>
+                <input type="text" id="moodNote" placeholder="How are you feeling?">
+                <button onclick="postMood()">Share</button>
+            </div>
+            
+            <h3>Your Mood History</h3>
+            <div id="user-moods"></div>
+            
+            <h3>Partner's Moods</h3>
+            <div id="partner-moods"></div>
+        </div>
+    </div>
+
+    <script>
+       const firebaseConfig = {
+  apiKey: "AIzaSyBrjBUyE3jW7c9DK8x2F8eANlSya9FxUYg",
+  authDomain: "moodconnect-465eb.firebaseapp.com",
+  projectId: "moodconnect-465eb",
+  storageBucket: "moodconnect-465eb.firebasestorage.app",
+  messagingSenderId: "451443068092",
+  appId: "1:451443068092:web:a80b38f9d9406d80ced4b9",
+};
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let currentUser = {};
+        let roomCode = '';
+        let partnerName = '';
+        let userRef;
+
+        async function joinRoom() {
+            const userName = document.getElementById('userName').value;
+            roomCode = document.getElementById('roomCode').value;
+
+            if (!userName || !roomCode) {
+                alert('Please enter both name and room code');
+                return;
+            }
+
+            currentUser = {
+                id: Math.random().toString(36).substr(2, 9),
+                name: userName,
+                room: roomCode
+            };
+
+            // Initialize room
+            const roomRef = db.collection("rooms").doc(roomCode);
+            await roomRef.set({ exists: true }, { merge: true });
+
+            // Add user to room
+            userRef = roomRef.collection("users").doc(currentUser.id);
+            await userRef.set({
+                name: currentUser.name,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Listen for users
+            roomRef.collection("users").onSnapshot((snapshot) => {
+                const users = [];
+                snapshot.forEach(doc => {
+                    if (doc.id !== currentUser.id) users.push(doc.data().name);
+                });
+                
+                partnerName = users[0] || '';
+                updateConnectionStatus(users.length > 0);
+                loadHistory();
+            });
+
+            // Cleanup on exit
+            window.addEventListener('beforeunload', async () => {
+                await userRef.delete();
+            });
+
+            // Initialize app
+            localStorage.setItem('moodConnectUser', JSON.stringify(currentUser));
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('currentRoomCode').textContent = roomCode;
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            status.innerHTML = `
+                <div class="status-dot ${connected ? 'online' : 'offline'}"></div>
+                <span>${connected ? `Connected with ${partnerName}` : 'Waiting for partner...'}</span>
+            `;
+        }
+
+        async function loadHistory() {
+            const snapshot = await db.collection("rooms").doc(roomCode)
+                .collection("moods")
+                .orderBy("timestamp", "desc")
+                .get();
+
+            snapshot.forEach(doc => {
+                const mood = doc.data();
+                if (mood.userId === currentUser.id) {
+                    displayUserMood(mood);
+                } else {
+                    displayPartnerMood(mood);
+                }
+            });
+
+            // Setup real-time listener
+            db.collection("rooms").doc(roomCode)
+                .collection("moods")
+                .orderBy("timestamp", "desc")
+                .onSnapshot((snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            const mood = change.doc.data();
+                            if (mood.userId === currentUser.id) {
+                                displayUserMood(mood);
+                            } else {
+                                displayPartnerMood(mood);
+                            }
+                        }
+                    });
+                });
+        }
+
+        async function postMood() {
+            const mood = document.getElementById('moodSelector').value;
+            const note = document.getElementById('moodNote').value;
+
+            const moodData = {
+                emoji: mood,
+                note: note,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                userId: currentUser.id,
+                userName: currentUser.name
+            };
+
+            await db.collection("rooms").doc(roomCode)
+                .collection("moods")
+                .add(moodData);
+
+            document.getElementById('moodSelector').value = '😊';
+            document.getElementById('moodNote').value = '';
+        }
+
+        function displayUserMood(mood) {
+            const container = document.getElementById('user-moods');
+            if (!container.innerHTML.includes(mood.timestamp)) {
+                container.insertAdjacentHTML('afterbegin', createMoodElement(mood, true));
+            }
+        }
+
+        function displayPartnerMood(mood) {
+            const container = document.getElementById('partner-moods');
+            if (!container.innerHTML.includes(mood.timestamp)) {
+                container.insertAdjacentHTML('afterbegin', createMoodElement(mood, false));
+            }
+        }
+
+        function createMoodElement(mood, isSelf) {
+            const date = new Date(mood.timestamp?.toDate() || new Date()).toLocaleString();
+            return `
+                <div class="mood-entry ${!isSelf ? 'partner-mood' : ''}">
+                    <div class="emoji">${mood.emoji}</div>
+                    <div>
+                        <div>${mood.note}</div>
+                        <small>${date}</small>
+                    </div>
+                    ${!isSelf ? `<div class="user-badge">${mood.userName}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // Check for existing session
+        const savedUser = localStorage.getItem('moodConnectUser');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            roomCode = currentUser.room;
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('currentRoomCode').textContent = roomCode;
+            loadHistory();
+        }
+    </script>
+</body>
+</html>

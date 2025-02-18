@@ -286,23 +286,8 @@
                         <option value="🎉">Excited</option>
                         <option value="😴">Tired</option>
                     </select>
-                    <input type="text" id="moodInput" placeholder="Type your mood" onkeydown="handleKeyPress(event)">
-<button onclick="postMood()">Send</button>
-
-<script>
-  function postMood() {
-    let input = document.getElementById("moodInput").value;
-    console.log("Mood sent:", input);
-    document.getElementById("moodInput").value = ""; // Clear input field after sending
-  }
-
-  function handleKeyPress(event) {
-    if (event.key === "Enter") {
-      postMood();
-    }
-  }
-</script>
-
+                    <input type="text" id="moodNote" placeholder="How are you feeling?">
+                    <button onclick="postMood()">Send</button>
                 </div>
             </div>
         </div>

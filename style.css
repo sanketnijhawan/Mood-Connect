@@ -1,0 +1,342 @@
+:root {
+    --primary: #6c5ce7;
+    --secondary: #a8a5e6;
+    --accent: #ff7675;
+    --background: #f8f9fa;
+    --text: #2d3436;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--background) 0%, #e9ecef 100%);
+    min-height: 100vh;
+    margin: 0;
+    color: var(--text);
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-box {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-box h1 {
+    color: var(--primary);
+    margin-bottom: 30px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: 2px solid var(--secondary);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.login-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.login-btn:hover {
+    background: #5b4bc4;
+    transform: translateY(-2px);
+}
+
+.container {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    padding: 40px 0;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    margin-bottom: 40px;
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+}
+
+.header h1 {
+    font-size: 2.5em;
+    margin: 0;
+    padding: 20px;
+}
+
+.chat-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message {
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 15px;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease;
+    position: relative;
+}
+
+.own-message {
+    background: #6c5ce7;
+    color: white;
+    margin-left: auto;
+}
+
+.partner-message {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    margin-right: auto;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.message-emoji {
+    font-size: 1.5em;
+}
+
+.message-time {
+    font-size: 0.75em;
+    opacity: 0.8;
+    margin-top: 5px;
+}
+
+.message-content {
+    word-wrap: break-word;
+}
+
+.logout-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.generate-code {
+    background: var(--secondary);
+    margin-left: 10px;
+    padding: 8px 15px;
+}
+
+.room-code {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+.mood-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.mood-form select {
+    appearance: none;
+    padding: 12px;
+    border: 2px solid var(--secondary);
+    border-radius: 8px;
+    background: white;
+    font-size: 16px;
+    width: 140px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c5ce7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+}
+
+.mood-form input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--secondary);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.mood-form input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(108,92,231,0.1);
+}
+
+.mood-form button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mood-form button:hover {
+    background: #5b4bc4;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Add these at the bottom of existing CSS */
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .header {
+        padding: 20px 0;
+        clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+        padding: 15px;
+    }
+
+    .room-code {
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+
+    .login-box {
+        padding: 25px;
+    }
+
+    .chat-container {
+        max-height: 55vh;
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .mood-form {
+        flex-direction: column;
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .mood-form select,
+    .mood-form input,
+    .mood-form button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .logout-btn {
+        padding: 8px 15px;
+        font-size: 0.9em;
+        top: 15px;
+        left: 15px;
+    }
+
+    .message-header {
+        flex-wrap: wrap;
+    }
+
+    .chat-message {
+        max-width: 90%;
+        padding: 10px;
+        margin: 8px 0;
+    }
+
+    .login-input {
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+
+    .login-btn {
+        padding: 10px 20px;
+        font-size: 15px;
+    }
+
+    /* Prevent zoom on mobile input focus */
+    @media screen and (max-width: 767px) {
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5em;
+    }
+
+    .connection-status {
+        font-size: 0.9em;
+    }
+
+    .message-content {
+        font-size: 0.95em;
+    }
+
+    .message-time {
+        font-size: 0.7em;
+    }
+
+    .mood-form button {
+        padding: 10px 15px;
+    }
+}
+
+/* Touch-friendly elements */
+button, select {
+    min-height: 44px;
+    touch-action: manipulation;
+}

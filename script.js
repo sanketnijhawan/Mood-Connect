@@ -26,8 +26,8 @@ function generateRoomCode() {
 }
 
 async function joinRoom() {
-    const userName = document.getElementById('userName').value;
-    roomCode = document.getElementById('roomCode').value;
+    const userName = document.getElementById('userName').value.trim();
+    roomCode = document.getElementById('roomCode').value.trim().toUpperCase();
 
     if (!userName || !roomCode) {
         alert('Please enter both name and room code');
@@ -54,7 +54,6 @@ async function joinRoom() {
         snapshot.forEach(doc => {
             if (doc.id !== currentUser.id) users.push(doc.data().name);
         });
-        
         updateConnectionStatus(users);
     });
 
@@ -62,9 +61,8 @@ async function joinRoom() {
     window.addEventListener('beforeunload', beforeUnloadListener);
 
     localStorage.setItem('moodConnectUser', JSON.stringify(currentUser));
-    document.querySelector('.logout-btn').style.display = 'block';
-    document.querySelector('.login-container').style.display = 'none';
-    document.querySelector('.container').style.display = 'block';
+    document.getElementById('landingPage').style.display = 'none';
+    document.getElementById('roomPage').style.display = 'block';
     document.getElementById('currentRoomCode').textContent = roomCode;
     
     setupChatListener();
@@ -162,27 +160,19 @@ async function postMood() {
 
 async function logout() {
     try {
-        // Delete user from room
         await userRef.delete();
-        
-        // Delete all messages in the room
         const messagesRef = db.collection("rooms").doc(roomCode).collection("moods");
         const snapshot = await messagesRef.get();
         const batch = db.batch();
-        snapshot.forEach(doc => {
-            batch.delete(doc.ref);
-        });
+        snapshot.forEach(doc => batch.delete(doc.ref));
         await batch.commit();
-
     } catch (error) {
         console.error('Logout error:', error);
     }
     
-    // Clear local data
     localStorage.removeItem('moodConnectUser');
-    document.querySelector('.logout-btn').style.display = 'none';
-    document.querySelector('.login-container').style.display = 'flex';
-    document.querySelector('.container').style.display = 'none';
+    document.getElementById('roomPage').style.display = 'none';
+    document.getElementById('landingPage').style.display = 'block';
     document.getElementById('chatContainer').innerHTML = '';
     window.removeEventListener('beforeunload', beforeUnloadListener);
     
@@ -202,9 +192,8 @@ const savedUser = localStorage.getItem('moodConnectUser');
 if (savedUser) {
     currentUser = JSON.parse(savedUser);
     roomCode = currentUser.room;
-    document.querySelector('.logout-btn').style.display = 'block';
-    document.querySelector('.login-container').style.display = 'none';
-    document.querySelector('.container').style.display = 'block';
+    document.getElementById('landingPage').style.display = 'none';
+    document.getElementById('roomPage').style.display = 'block';
     document.getElementById('currentRoomCode').textContent = roomCode;
     setupChatListener();
 }

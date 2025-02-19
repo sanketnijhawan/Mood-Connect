@@ -5,51 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mood Connect</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
 <body>
-    <button class="logout-btn" onclick="logout()" style="display: none;">Logout</button>
-
-
-
-    <div class="header">
-        <div class="room-code">Room: <span id="currentRoomCode"></span></div>
-        <h1>Mood Connect 💞</h1>
-    </div>
-
-    <div class="login-container">
-        <div class="login-box">
-            <h1>Room login 🌟</h1>
-            <input type="text" id="userName" class="login-input" placeholder="Your Name">
-            <div style="position: relative;">
-                <input type="text" id="roomCode" class="login-input" placeholder="Room Code">
-                <button class="login-btn generate-code" onclick="generateRoomCode()">Generate Code</button>
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-content">
+            <div class="brand">
+                <div class="logo">
+                    <span class="emoji">💫</span>
+                </div>
+                <h1>Mood Connect</h1>
+                <p class="tagline">Share your feelings, connect with others</p>
             </div>
-            <button class="login-btn" onclick="joinRoom()">Enter Room</button>
+
+            <div class="login-container">
+                <div class="login-box">
+                    <div class="login-header">
+                        <h2>Join a Room</h2>
+                        <p>Connect with others in a safe space</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userName">Your Name</label>
+                        <input type="text" id="userName" class="login-input" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="roomCode">Room Code</label>
+                        <div class="room-code-container">
+                            <input type="text" id="roomCode" class="login-input" placeholder="Enter room code">
+                            <button class="generate-btn" onclick="generateRoomCode()">
+                                <span class="btn-icon">🎲</span>
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="join-btn" onclick="joinRoom()">
+                        Join Room
+                        <span class="btn-icon">→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="landing-footer">
+            <p>Share your emotions safely and anonymously</p>
+            <div class="mood-bubbles">
+                <span>😊</span>
+                <span>💭</span>
+                <span>💫</span>
+                <span>✨</span>
+                <span>💝</span>
+            </div>
         </div>
     </div>
 
-    
-    <div class="container">
-        <div class="user-section">
+    <!-- Chat Room Page -->
+    <div class="room-page" id="roomPage" style="display: none;">
+        <button class="logout-btn" onclick="logout()">
+            <span class="btn-icon">←</span>
+            Leave Room
+        </button>
+
+        <div class="room-header">
+            <div class="room-info">
+                <h2>Mood Room</h2>
+                <div class="room-code">
+                    Room Code: <span id="currentRoomCode"></span>
+                </div>
+            </div>
             <div class="connection-status" id="connectionStatus">
                 <div class="status-dot offline"></div>
-                <span>Connecting to room...</span>
+                <span>Connecting...</span>
             </div>
-            
+        </div>
+
+        <div class="room-container">
             <div class="chat-container" id="chatContainer"></div>
 
             <div class="mood-form">
-                <select id="moodSelector">
-                    <option value="😊">😊 Happy</option>
-                    <option value="😢">😢 Sad</option>
-                    <option value="😡">😡 Angry</option>
-                    <option value="🎉">🎉 Excited</option>
-                    <option value="😴">😴 Tired</option>
-                </select>
-                <input type="text" id="moodNote" placeholder="How are you feeling?">
-                <button onclick="postMood()">Send</button>
+                <div class="mood-selector">
+                    <label for="moodSelector">How are you feeling?</label>
+                    <select id="moodSelector">
+                        <option value="😊">😊 Happy</option>
+                        <option value="😢">😢 Sad</option>
+                        <option value="😡">😡 Angry</option>
+                        <option value="🎉">🎉 Excited</option>
+                        <option value="😴">😴 Tired</option>
+                        <option value="🤔">🤔 Thoughtful</option>
+                        <option value="😌">😌 Peaceful</option>
+                        <option value="🥰">🥰 Loved</option>
+                    </select>
+                </div>
+                
+                <div class="mood-input">
+                    <input type="text" id="moodNote" placeholder="Share your thoughts...">
+                    <button onclick="postMood()">
+                        <span class="btn-icon">📤</span>
+                        Share
+                    </button>
+                </div>
             </div>
         </div>
     </div>

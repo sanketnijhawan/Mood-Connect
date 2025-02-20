@@ -343,7 +343,7 @@ body {
 .logout-btn {
     position: fixed;
     top: 1.5rem;
-    left: 1.5rem;
+    right: 1.5rem;
     background: var(--accent);
     color: white;
     border: none;
